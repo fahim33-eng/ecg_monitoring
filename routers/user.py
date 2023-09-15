@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Response, HTTPException, Depends, APIRouter
+from fastapi import FastAPI, Response, HTTPException, Depends, APIRouter, Query
 from fastapi.params import Body
 import models
 from database import get_db
@@ -51,17 +51,38 @@ def delete_user(id: int, db: Session = Depends(get_db)):
     db.commit()
     return user
 
+@router.get("/patients", response_model=List[Patient], tags=['patients'])
+def get_users(db: Session = Depends(get_db)):
+    users = db.query(models.Patient).all()
+    return users
+
 @router.get("/patients/{id}", response_model = ResponsePatient, tags=['patients'])
 def get_patient(id : int, db : Session = Depends(get_db)) :
     patient = db.query(models.Patient).filter(models.Patient.user_id == id).first()
     return patient
 
 @router.post("/patients", status_code = 201, response_model = ResponsePatient, tags=['patients'])
-def create_patient(patient : Patient, db : Session = Depends(get_db)) :
-    new_patient = models.Patient(**patient.dict())
+def create_patient(
+    message: str = Query(default = None),
+    fall_detection: str = Query(default = None),
+    urine_detection: str  = Query(default = None),
+    ecg: str = Query(default = None),
+    user_id : int = Query(...),
+    db: Session = Depends(get_db)
+    ):
+    
+    new_patient = models.Patient(
+        message=message,
+        fall_detection=fall_detection,
+        urine_detection=urine_detection,
+        ecg=ecg,
+        user_id = user_id
+    )
+
     db.add(new_patient)
     db.commit()
     db.refresh(new_patient)
+
     return new_patient
 
 @router.put("/patients/{id}", response_model=ResponsePatient, tags=['patients'])

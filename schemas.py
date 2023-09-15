@@ -3,8 +3,8 @@ from typing import Optional
 
 class Patient(BaseModel) :
     message: str | None = None
-    fall_detection: bool | None = None
-    urine_detection: bool | None = None
+    fall_detection: str | None = None
+    urine_detection: str | None = None
     ecg: str | None = None
     user_id : int
 
@@ -21,8 +21,8 @@ class UpdateUser(BaseModel) :
 class ResponsePatient(BaseModel):
     id: int
     message: str | None = None
-    fall_detection: bool | None = None
-    urine_detection: bool | None = None
+    fall_detection: str | None = None
+    urine_detection: str | None = None
     ecg: str | None = None
     user_id : int
     class Config:
