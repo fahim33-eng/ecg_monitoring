@@ -13,6 +13,11 @@ class User(BaseModel) :
     phone : str
     password : str
 
+class UpdateUser(BaseModel) :
+    name : str
+    phone : str
+    role : int | None = 1
+
 class ResponsePatient(BaseModel):
     id: int
     message: str | None = None
@@ -26,6 +31,8 @@ class ResponsePatient(BaseModel):
 class ResponseUser(BaseModel) :
     id : int
     role : int
+    name : str
+    phone : str
 
     class Config :
         orm_mode = True
