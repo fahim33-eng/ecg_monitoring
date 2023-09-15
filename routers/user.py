@@ -45,3 +45,19 @@ def create_patient(patient : Patient, db : Session = Depends(get_db)) :
     db.commit()
     db.refresh(new_patient)
     return new_patient
+
+@router.put("/patients/{id}", response_model=ResponsePatient, tags=['patients'])
+def update_patient(id: int, patient: Patient, db: Session = Depends(get_db)):
+    existing_patient = db.query(models.Patient).filter(models.Patient.id == id).first()
+    if existing_patient is None:
+        raise HTTPException(status_code=404, detail="Patient not found")
+    else :
+        existing_user= db.query(models.User).filter(models.User.id == patient.user_id).first()
+        print(existing_user)
+        if existing_user is None :
+            raise HTTPException(status_code=404, detail="User not found")
+        for attr, value in patient.dict().items():
+            setattr(existing_patient, attr, value)
+        db.commit()
+        db.refresh(existing_patient)
+        return existing_patient
